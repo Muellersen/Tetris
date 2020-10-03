@@ -2,9 +2,9 @@
 Copyright 2020 Patrick Müller
 Tetris
 """
+from numpy import *
 
-
-class Object:
+clasas Object:
     """
     The superclass for the blocks in Tetris
     """
