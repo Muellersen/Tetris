@@ -86,3 +86,4 @@ class Tetromino:
 # by taking the self.coords and turn
 # them into real coords with the self.box_coords
 # make a field with dictionary
+# track the state of the rotation
