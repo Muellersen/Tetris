@@ -27,56 +27,71 @@ class Tetromino:
         self.rotation_state = 0
         self.rotation_state_virtual = 0
         if tetro_type == "o":
-            self.box_coords = [(4, 0), (5, 2)]
-            self.coords = [np.array([-1], [-1]), np.array([-1], [1]),
-                           np.array([1], [1]), np.array([1], [-1])]
+            self.box_coords = [(4, 0), (5, 1)]
+            self.coords = [np.array([[-1], [-1]]), np.array([[-1], [1]]),
+                           np.array([[1], [1]]), np.array([[1], [-1]])]
         elif tetro_type == "L":
-            self.box_coords = [(3, 0), (5, 3)]
-            self.coords = [np.array([0], [0]), np.array([-1], [0]),
-                           np.array([1], [0]), np.array([1], [1])]
+            self.box_coords = [(3, 0), (5, 2)]
+            self.coords = [np.array([[0], [0]]), np.array([[-1], [0]]),
+                           np.array([[1], [0]]), np.array([[1], [1]])]
         elif tetro_type == "J":
-            self.box_coords = [(3, 0), (5, 3)]
-            self.coords = [np.array([0], [0]), np.array([-1], [0]),
-                           np.array([-1], [1]), np.array([1], [0])]
+            self.box_coords = [(3, 0), (5, 2)]
+            self.coords = [np.array([[0], [0]]), np.array([[-1], [0]]),
+                           np.array([[-1], [1]]), np.array([[1], [0]])]
         elif tetro_type == "z":
-            self.box_coords = [(3, 0), (5, 3)]
-            self.coords = [np.array([0], [0]), np.array([-1], [1]),
-                           np.array([0], [1]), np.array([1], [0])]
+            self.box_coords = [(3, 0), (5, 2)]
+            self.coords = [np.array([[0], [0]]), np.array([[-1], [1]]),
+                           np.array([[0], [1]]), np.array([[1], [0]])]
         elif tetro_type == "s":
-            self.box_coords = [(3, 0), (5, 3)]
-            self.coords = [np.array([0], [0]), np.array([-1], [0]),
-                           np.array([0], [1]), np.array([1], [1])]
+            self.box_coords = [(3, 0), (5, 2)]
+            self.coords = [np.array([[0], [0]]), np.array([[-1], [0]]),
+                           np.array([[0], [1]]), np.array([[1], [1]])]
         elif tetro_type == "T":
-            self.box_coords = [(3, 0), (5, 3)]
-            self.coords = [np.array([0], [0]), np.array([-1], [0]),
-                           np.array([0], [1]), np.array([1], [0])]
+            self.box_coords = [(3, 0), (5, 2)]
+            self.coords = [np.array([[0], [0]]), np.array([[-1], [0]]),
+                           np.array([[0], [1]]), np.array([[1], [0]])]
         elif tetro_type == "l":
-            self.box_coords = [(3, 0), (6, 4)]
-            self.coords = [np.array([-2], [1]), np.array([-1], [1]),
-                           np.array([1], [1]), np.array([2], [1])]
+            self.box_coords = [(3, 0), (6, 3)]
+            self.coords = [np.array([[-2], [1]]), np.array([[-1], [1]]),
+                           np.array([[1], [1]]), np.array([[2], [1]])]
 
     def return_coords(self) -> list:
+        """
+        Doctest:
+        >>> o = Tetromino("o")
+        >>> o.return_coords()
+        [(4, 0), (5, 0), (4, 1), (5, 1)]
+        >>> z = Tetromino("z")
+        >>> z.return_coords()
+        [(4, 1), (3, 0), (4, 0), (5, 1)]
+        >>> l = Tetromino("l")
+        >>> l.return_coords()
+        [(3, 1), (4, 1), (5, 1), (6, 1)]
+        >>> l.box_coords = [(4, 1), (7, 4)]
+        >>> l.return_coords()
+        [(4, 2), (5, 2), (6, 2), (7, 2)]
+        """
         result = []
         start_x = self.box_coords[0][0]
         start_y = self.box_coords[0][1]
-
+        coords = []
         for a in self.coords:
-            coords = coords + [(a[0] + 1, a[1] - 1)]
+            coords = coords + [(a[0][0] + 1, a[1][0] - 1)]
 
-        if x == 2 and y == 2:
+        if self.tetro_type == "o":
             return [self.box_coords[0],
                     (self.box_coords[0][0] + 1, self.box_coords[0][1]),
                     (self.box_coords[0][0], self.box_coords[0][1] + 1),
                     self.box_coords[1]]
-        elif x == 3 and y == 3:
+        elif self.tetro_type in ("s", "z", "T", "L", "J"):
             for a in coords:
                 result = result + [(a[0] + start_x, -1*a[1] + start_y)]
                 #                                   --------
                 # here we have to invert the a[1] because the self.coords
                 # are represented with the normal coordinate system
                 # while the self.box_coords have an inverted y axis
-                return result
-        elif x == 4 and y == 4:
+            return result
+        elif self.tetro_type == "l":
             # here we only need to find out one value of the "l"
             # in order to find out every other values
             # so there are 4 possibilities for each rotation_state
@@ -105,14 +120,23 @@ class Tetromino:
         rotation was possible and then afterwards applying the
         rotation to the real self.coords
         Basically this is a helper function
+
+        Doctests:
+        >>> T = Tetromino("T")
+        >>> T.rotation(True)
+        [([0], [0]), ([0], [1]), ([1], [0]), ([0], [-1])]
         """
+        if self.tetro_type == "o":
+            return
         result = []
-        clockwise = np.array([0, 1], [-1, 0])
-        counterclockwise = np.array([0, -1], [1, 0])
+        clockwise = np.array([[0, 1], [-1, 0]])
+        counterclockwise = np.array([[0, -1], [1, 0]])
 
         if direction is True:
             for a in self.coords:
-                result = result + [clockwise @ a]
+                product = clockwise @ a
+                product = product.tolist()
+                result = result + [tuple(product)]
                 if self.rotation_state == 0:
                     self.rotation_state_virtual = 1
                 elif self.rotation_state == 1:
@@ -140,6 +164,8 @@ class Tetromino:
         This function checks if the rotation was possible,
         with wall kicks and applies them if possible.
         """
+        # think about how this function wants the virtual coords
+        # from rotation() best
 
 
 # make a function that returns the real
