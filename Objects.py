@@ -55,8 +55,9 @@ class Tetromino:
             self.coords = [np.array([[-2], [1]]), np.array([[-1], [1]]),
                            np.array([[1], [1]]), np.array([[2], [1]])]
 
-    def return_coords(self) -> list:
+    def return_coords(self, virtual: bool) -> list:
         """
+        Implement with virtual coords
         Doctest:
         >>> o = Tetromino("o")
         >>> o.return_coords()
@@ -108,23 +109,23 @@ class Tetromino:
                 result = [(start_x + 1, start_y + a) for a in range(4)]
                 return result
 
-    def rotation(self, direction: bool) -> list:
+    def rotation(self, direction: bool):
         """
         The rotation is processed through matrix multiplication.
         The vectors of self.coords are either multiplied with a matrix
         indicating clockwise rotation for direction = True
         and counterclockwise rotation for direction = False
 
-        This function returns a list with the vectors after the
-        matrix multiplication. This is needed for checking if the
-        rotation was possible and then afterwards applying the
-        rotation to the real self.coords
-        Basically this is a helper function
+        This function creates the virtual coords that have to be proven
+        by check_rotation()
 
         Doctests:
         >>> T = Tetromino("T")
         >>> T.rotation(True)
-        [([0], [0]), ([0], [1]), ([1], [0]), ([0], [-1])]
+        [[[0], [0]], [[0], [1]], [[1], [0]], [[0], [-1]]]
+        >>> l = Tetromino("l")
+        >>> l.rotation(False)
+        [[[-1], [-2]], [[-1], [-1]], [[-1], [1]], [[-1], [2]]]
         """
         if self.tetro_type == "o":
             return
@@ -135,8 +136,7 @@ class Tetromino:
         if direction is True:
             for a in self.coords:
                 product = clockwise @ a
-                product = product.tolist()
-                result = result + [tuple(product)]
+                result = result + [product.tolist()]
                 if self.rotation_state == 0:
                     self.rotation_state_virtual = 1
                 elif self.rotation_state == 1:
@@ -147,7 +147,8 @@ class Tetromino:
                     self.rotation_state_virtual = 0
         else:
             for a in self.coords:
-                result = result + [counterclockwise @ a]
+                product = counterclockwise @ a
+                result = result + [product.tolist()]
                 if self.rotation_state == 0:
                     self.rotation_state_virtual = 3
                 elif self.rotation_state == 3:
