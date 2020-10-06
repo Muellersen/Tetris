@@ -26,6 +26,7 @@ class Tetromino:
         self.tetro_type = tetro_type
         self.rotation_state = 0
         self.rotation_state_virtual = 0
+        self.virtual_coords = None
         if tetro_type == "o":
             self.box_coords = [(4, 0), (5, 1)]
             self.coords = [np.array([[-1], [-1]]), np.array([[-1], [1]]),
@@ -60,23 +61,28 @@ class Tetromino:
         Implement with virtual coords
         Doctest:
         >>> o = Tetromino("o")
-        >>> o.return_coords()
+        >>> o.return_coords(False)
         [(4, 0), (5, 0), (4, 1), (5, 1)]
         >>> z = Tetromino("z")
-        >>> z.return_coords()
+        >>> z.return_coords(False)
         [(4, 1), (3, 0), (4, 0), (5, 1)]
         >>> l = Tetromino("l")
-        >>> l.return_coords()
+        >>> l.return_coords(False)
         [(3, 1), (4, 1), (5, 1), (6, 1)]
         >>> l.box_coords = [(4, 1), (7, 4)]
-        >>> l.return_coords()
+        >>> l.return_coords(False)
         [(4, 2), (5, 2), (6, 2), (7, 2)]
         """
+        if virtual is True:
+            co = self.virtual_coords
+        else:
+            co = self.coords
+
         result = []
         start_x = self.box_coords[0][0]
         start_y = self.box_coords[0][1]
         coords = []
-        for a in self.coords:
+        for a in co:
             coords = coords + [(a[0][0] + 1, a[1][0] - 1)]
 
         if self.tetro_type == "o":
@@ -120,12 +126,12 @@ class Tetromino:
         by check_rotation()
 
         Doctests:
-        >>> T = Tetromino("T")
-        >>> T.rotation(True)
-        [[[0], [0]], [[0], [1]], [[1], [0]], [[0], [-1]]]
-        >>> l = Tetromino("l")
-        >>> l.rotation(False)
-        [[[-1], [-2]], [[-1], [-1]], [[-1], [1]], [[-1], [2]]]
+        # >>> T = Tetromino("T")
+        # >>> T.rotation(True)
+        # [[[0], [0]], [[0], [1]], [[1], [0]], [[0], [-1]]]
+        # >>> l = Tetromino("l")
+        # >>> l.rotation(False)
+        # [[[-1], [-2]], [[-1], [-1]], [[-1], [1]], [[-1], [2]]]
         """
         if self.tetro_type == "o":
             return
@@ -136,7 +142,7 @@ class Tetromino:
         if direction is True:
             for a in self.coords:
                 product = clockwise @ a
-                result = result + [product.tolist()]
+                result = result + [product]
                 if self.rotation_state == 0:
                     self.rotation_state_virtual = 1
                 elif self.rotation_state == 1:
@@ -148,7 +154,7 @@ class Tetromino:
         else:
             for a in self.coords:
                 product = counterclockwise @ a
-                result = result + [product.tolist()]
+                result = result + [product]
                 if self.rotation_state == 0:
                     self.rotation_state_virtual = 3
                 elif self.rotation_state == 3:
@@ -158,7 +164,7 @@ class Tetromino:
                 elif self.rotation_state == 1:
                     self.rotation_state_virtual = 0
 
-        return result
+        self.virtual_coords = result
 
     def check_rotation(self, direction: bool, field: dict):
         """
@@ -167,11 +173,17 @@ class Tetromino:
         """
         # think about how this function wants the virtual coords
         # from rotation() best
-
-
-# make a function that returns the real
-# coords of the tiles of a tetromino
-# by taking the self.coords and turn
-# them into real coords with the self.box_coords
-# make a field with dictionary
-# track the state of the rotation
+        # -----------------------------------------------------
+        # needs: - the field and the other tetrominos already placed
+        #        - if there is a tetromino -> field[coords] = 1
+        #        - virtual coords of the desired rotation
+        #        - old and new rotation state
+        #        - instructions if a rotation failed (wallkicks)
+        # -----------------------------------------------------
+        # - checks rotation, remembers old box_coords and if failed then
+        #   move the tetromino according to the wallkick data
+        # - checks if rotation is possible with the self.virtual_coords
+        #   from the method return_coords()
+        #   and compares them to the field and if the one self.virtual_coords
+        #   is where the field = 1 or its out of the field then the rotation
+        #   failed
