@@ -170,7 +170,58 @@ class Tetromino:
         """
         This function checks if the rotation was possible,
         with wall kicks and applies them if possible.
+        direction = True clockwise
+        direction = False counterclockwise
         """
+        if self.tetro_type in ("z", "s", "L", "J", "T"):
+            if self.rotation_state == 0 and direction is True:
+                positions = [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)]
+                new_state = 1
+            elif self.rotation_state == 1 and direction is False:
+                positions = [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)]
+                new_state = 0
+            elif self.rotation_state == 1 and direction is True:
+                positions = [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)]
+                new_state = 2
+            elif self.rotation_state == 2 and direction is False:
+                positions = [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)]
+                new_state = 1
+            elif self.rotation_state == 2 and direction is True:
+                positions = [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)]
+                new_state = 3
+            elif self.rotation_state == 3 and direction is False:
+                positions = [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]
+                new_state = 2
+            elif self.rotation_state == 3 and direction is True:
+                positions = [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]
+                new_state = 0
+            elif self.rotation_state == 0 and direction is False:
+                positions = [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)]
+                new_state = 3
+
+            for new_pos in positions:
+                temp = self.box_coords
+                # the box coords need to be safed otherwise the new_pos
+                # will be added without deleting the old new_pos
+                self.box_coords = [(self.box_coords[0][0] + new_pos[0],
+                                    self.box_coords[0][1] + new_pos[1]),
+                                   (self.box_coords[1][0] + new_pos[0],
+                                    self.box_coords[1][1] + new_pos[1])]
+                self.rotation(direction)
+                new_coords = self.return_coords(True)
+                self.box_coords = temp
+                for a in new_coords:
+                    if field[new_coords] == 1:
+                        stop = True
+                if stop is True:
+                    continue
+                else:
+                    self.coords = self.virtual_coords
+                    self.virtual_coords = None
+                    self.rotation_state = new_state
+
+        elif self.tetro_type = "l":
+            pass
         # think about how this function wants the virtual coords
         # from rotation() best
         # -----------------------------------------------------
