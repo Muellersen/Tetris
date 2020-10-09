@@ -126,12 +126,21 @@ class Tetromino:
         by check_rotation()
 
         Doctests:
-        # >>> T = Tetromino("T")
-        # >>> T.rotation(True)
-        # [[[0], [0]], [[0], [1]], [[1], [0]], [[0], [-1]]]
-        # >>> l = Tetromino("l")
-        # >>> l.rotation(False)
-        # [[[-1], [-2]], [[-1], [-1]], [[-1], [1]], [[-1], [2]]]
+        >>> T = Tetromino("T")
+        >>> T.rotation(True)
+        >>> T.virtual_coords
+        [array([[0],
+               [0]]), array([[0],
+               [1]]), array([[1],
+               [0]]), array([[ 0],
+               [-1]])]
+        >>> T.rotation(False)
+        >>> T.virtual_coords
+        [array([[0],
+               [0]]), array([[ 0],
+               [-1]]), array([[-1],
+               [ 0]]), array([[0],
+               [1]])]
         """
         if self.tetro_type == "o":
             return
@@ -172,69 +181,156 @@ class Tetromino:
         with wall kicks and applies them if possible.
         direction = True clockwise
         direction = False counterclockwise
+
+        -----------------------------------------------------
+        needs:  - the field and the other tetrominos already placed
+                - if there is a tetromino -> field[coords] = 1
+                - virtual coords of the desired rotation
+                - old and new rotation state
+                - instructions if a rotation failed (wallkicks)
+        -----------------------------------------------------
+           checks rotation, remembers old box_coords and if failed then
+           move the tetromino according to the wallkick data
+         - checks if rotation is possible with the self.virtual_coords
+           from the method return_coords()
+           and compares them to the field and if the one self.virtual_coords
+           is where the field = 1 or its out of the field then the rotation
+           failed
+
+        Doctests:
+        >>> T = Tetromino("T")
+        >>> field = {}
+        >>> coord = [(a, b) for a in range(10) for b in range(23)]
+        >>> for a in coord: field[a] = 0
+        >>> T.check_rotation(False, field)
+        >>> T.rotation_state == 1
+        True
+        >>> T.coords
         """
+        box = self.box_coords
         if self.tetro_type in ("z", "s", "L", "J", "T"):
             if self.rotation_state == 0 and direction is True:
+                # 0 -> 1
                 positions = [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)]
                 new_state = 1
             elif self.rotation_state == 1 and direction is False:
+                # 1 -> 0
                 positions = [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)]
                 new_state = 0
             elif self.rotation_state == 1 and direction is True:
+                # 1 -> 2
                 positions = [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)]
                 new_state = 2
             elif self.rotation_state == 2 and direction is False:
+                # 2 -> 1
                 positions = [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)]
                 new_state = 1
             elif self.rotation_state == 2 and direction is True:
+                # 2 -> 3
                 positions = [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)]
                 new_state = 3
             elif self.rotation_state == 3 and direction is False:
+                # 3 -> 2
                 positions = [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]
                 new_state = 2
             elif self.rotation_state == 3 and direction is True:
+                # 3 -> 0
                 positions = [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]
                 new_state = 0
             elif self.rotation_state == 0 and direction is False:
+                # 0 -> 3
                 positions = [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)]
                 new_state = 3
 
             for new_pos in positions:
+                # here each position will be checked if a rotation
+                # fails because there is an obstacle
                 temp = self.box_coords
                 # the box coords need to be safed otherwise the new_pos
                 # will be added without deleting the old new_pos
+                stop = False
                 self.box_coords = [(self.box_coords[0][0] + new_pos[0],
                                     self.box_coords[0][1] + new_pos[1]),
                                    (self.box_coords[1][0] + new_pos[0],
                                     self.box_coords[1][1] + new_pos[1])]
                 self.rotation(direction)
-                new_coords = self.return_coords(True)
-                self.box_coords = temp
-                for a in new_coords:
-                    if field[new_coords] == 1:
+                new_coords = self.return_coords(True)  # new virtual coords
+                for a in new_coords:  # checking if the tetromino hit smth
+                    if field.get(a) is None or field[a] == 1:
+                        # the first condition is for checking if the
+                        # tetromino hit another tetromino lying there
+                        # the second for checking if its outside of the field
                         stop = True
                 if stop is True:
+                    # if the rotation didnt work we have to
+                    # put tetromino back at his previous position
+                    # so the next position can be tested or
+                    # it will stay in place
+                    self.box_coords = temp
                     continue
                 else:
-                    self.coords = self.virtual_coords
+                    self.coords = self.virtual_coords  # applied new coords
                     self.virtual_coords = None
                     self.rotation_state = new_state
 
-        elif self.tetro_type = "l":
-            pass
-        # think about how this function wants the virtual coords
-        # from rotation() best
-        # -----------------------------------------------------
-        # needs: - the field and the other tetrominos already placed
-        #        - if there is a tetromino -> field[coords] = 1
-        #        - virtual coords of the desired rotation
-        #        - old and new rotation state
-        #        - instructions if a rotation failed (wallkicks)
-        # -----------------------------------------------------
-        # - checks rotation, remembers old box_coords and if failed then
-        #   move the tetromino according to the wallkick data
-        # - checks if rotation is possible with the self.virtual_coords
-        #   from the method return_coords()
-        #   and compares them to the field and if the one self.virtual_coords
-        #   is where the field = 1 or its out of the field then the rotation
-        #   failed
+        elif self.tetro_type == "l":
+            if self.rotation_state == 0 and direction is True:
+                # 0 -> 1
+                positions = [(0, 0), (-2, 0), (1, 0), (-2, -1), (1, 2)]
+                new_state = 1
+            elif self.rotation_state == 1 and direction is False:
+                # 1 -> 0
+                positions = [(0, 0), (2, 0), (-1, 0), (2, 1), (-1, -2)]
+                new_state = 0
+            elif self.rotation_state == 1 and direction is True:
+                # 1 -> 2
+                positions = [(0, 0), (-1, 0), (2, 0), (-1, 2), (2, -1)]
+                new_state = 2
+            elif self.rotation_state == 2 and direction is False:
+                # 2 -> 1
+                positions = [(0, 0), (1, 0), (-2, 0), (1, -2), (-2, 1)]
+                new_state = 1
+            elif self.rotation_state == 2 and direction is True:
+                # 2 -> 3
+                positions = [(0, 0), (2, 0), (-1, 0), (2, 1), (-1, -2)]
+                new_state = 3
+            elif self.rotation_state == 3 and direction is False:
+                # 3 -> 2
+                positions = [(0, 0), (-2, 0), (1, 0), (-2, -1), (1, 2)]
+                new_state = 2
+            elif self.rotation_state == 3 and direction is True:
+                # 3 -> 0
+                positions = [(0, 0), (1, 0), (-2, 0), (1, -2), (-2, 1)]
+                new_state = 0
+            elif self.rotation_state == 0 and direction is False:
+                # 0 -> 3
+                positions = [(0, 0), (-1, 0), (2, 0), (-1, 2), (2, -1)]
+                new_state = 3
+
+            for new_pos in positions:
+                # here each position will be checked if a rotation
+                # fails because there is an obstacle
+                temp = self.box_coords
+                # the box coords need to be safed otherwise the new_pos
+                # will be added without deleting the old new_pos
+                stop = False
+                self.box_coords = [(self.box_coords[0][0] + new_pos[0],
+                                    self.box_coords[0][1] + new_pos[1]),
+                                   (self.box_coords[1][0] + new_pos[0],
+                                    self.box_coords[1][1] + new_pos[1])]
+                self.rotation(direction)
+                new_coords = self.return_coords(True)  # new virtual coords
+                for a in new_coords:  # checking if the tetromino hit smth
+                    if field.get(a) is None or field[a] == 1:
+                        stop = True
+                if stop is True:
+                    # if the rotation didnt work we have to
+                    # put tetromino back at his previous position
+                    # so the next position can be tested or
+                    # it will stay in place
+                    self.box_coords = temp
+                    continue
+                else:
+                    self.coords = self.virtual_coords  # applied new coords
+                    self.virtual_coords = None
+                    self.rotation_state = new_state
