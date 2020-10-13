@@ -202,10 +202,15 @@ class Tetromino:
         >>> field = {}
         >>> coord = [(a, b) for a in range(10) for b in range(23)]
         >>> for a in coord: field[a] = 0
-        >>> T.check_rotation(False, field)
+        >>> T.check_rotation(True, field)
         >>> T.rotation_state == 1
         True
         >>> T.coords
+        [array([[0],
+               [0]]), array([[0],
+               [1]]), array([[1],
+               [0]]), array([[ 0],
+               [-1]])]
         """
         box = self.box_coords
         if self.tetro_type in ("z", "s", "L", "J", "T"):
@@ -272,6 +277,7 @@ class Tetromino:
                     self.coords = self.virtual_coords  # applied new coords
                     self.virtual_coords = None
                     self.rotation_state = new_state
+                    break
 
         elif self.tetro_type == "l":
             if self.rotation_state == 0 and direction is True:
@@ -334,3 +340,44 @@ class Tetromino:
                     self.coords = self.virtual_coords  # applied new coords
                     self.virtual_coords = None
                     self.rotation_state = new_state
+                    break
+
+    def move(self, direction: bool, field: dict):
+        current_coords = self.return_coords()
+        if direction is True:
+            for coord in current_coords:
+                if (field.get((coord[0] + 1, coord[1])) is None
+                   or field[(coord[0] + 1, coord[1])] == 1):
+                    return
+            self.box_coords = [(self.box_coords[0][0] + 1,
+                                self.box_coords[0][1]),
+                               (self.box_coords[1][0] + 1,
+                                self.box_coords[1][1])]
+        else:
+            for coord in current_coords:
+                if (field.get((coord[0] - 1, coord[1])) is None
+                   or field[(coord[0] - 1, coord[1])] == 1):
+                    return
+            self.box_coords = [(self.box_coords[0][0] - 1,
+                                self.box_coords[0][1]),
+                               (self.box_coords[1][0] - 1,
+                                self.box_coords[1][1])]
+
+    def fall(self):
+        self.box_coords = [(self.box_coords[0][0],
+                            self.box_coords[0][1] + 1),
+                           (self.box_coords[1][0],
+                            self.box_coords[1][1] + 1)]
+
+    def check_collision(self, field: dict) -> bool:
+        """
+        Here we have to check the surroundings, so a collision
+        means the tetrominoes touch each other.
+        This function checks the collision under the tetromino
+        """
+        current_coords = self.return_coords()
+        for coord in current_coords:
+            if (field.get((coord[0], coord[1] + 1)) is None
+               or field[(coord[0], coord[1] + 1)] == 1):
+                return True
+        return False
