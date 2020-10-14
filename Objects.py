@@ -343,7 +343,26 @@ class Tetromino:
                     break
 
     def move(self, direction: bool, field: dict):
-        current_coords = self.return_coords()
+        """
+        This function takes a direction (right - True, left - False)
+        and a field, a dictionary and checks, if the movement is
+        possible. The movement is not possible if the coords are not
+        in the field or another tetromino is in the way
+
+        Doctest:
+        >>> T = Tetromino("T")
+        >>> field = {}
+        >>> coord = [(a, b) for a in range(10) for b in range(23)]
+        >>> for a in coord: field[a] = 0
+        >>> field[(6, 1)] = 1
+        >>> T.move(True, field)
+        >>> T.box_coords == [(3, 0), (5, 2)]
+        True
+        >>> T.move(False, field)
+        >>> T.box_coords == [(2, 0), (4, 2)]
+        True
+        """
+        current_coords = self.return_coords(False)
         if direction is True:
             for coord in current_coords:
                 if (field.get((coord[0] + 1, coord[1])) is None
@@ -364,6 +383,9 @@ class Tetromino:
                                 self.box_coords[1][1])]
 
     def fall(self):
+        """
+        This function lets the Tetromino move down.
+        """
         self.box_coords = [(self.box_coords[0][0],
                             self.box_coords[0][1] + 1),
                            (self.box_coords[1][0],
@@ -374,8 +396,20 @@ class Tetromino:
         Here we have to check the surroundings, so a collision
         means the tetrominoes touch each other.
         This function checks the collision under the tetromino
+
+        Doctest:
+        >>> T = Tetromino("T")
+        >>> field = {}
+        >>> coord = [(a, b) for a in range(10) for b in range(23)]
+        >>> for a in coord: field[a] = 0
+        >>> field[(3, 2)] = 1
+        >>> T.check_collision(field)
+        True
+        >>> field[(3, 2)] = 0
+        >>> T.check_collision(field)
+        False
         """
-        current_coords = self.return_coords()
+        current_coords = self.return_coords(False)
         for coord in current_coords:
             if (field.get((coord[0], coord[1] + 1)) is None
                or field[(coord[0], coord[1] + 1)] == 1):
