@@ -5,15 +5,15 @@ Tetris
 import numpy as np
 
 
-class Tetromino:
+class Tetrimino:
 
     def __init__(self, tetro_type: str):
         """
         The first element of the self.coords list is always the one in
         the middle except for the o and l one.
         Attributes:
-         - self.tetro_type : represents the tetromino
-         - self.box_coords : for determining where the tetromino is on
+         - self.tetro_type : represents the Tetrimino
+         - self.box_coords : for determining where the Tetrimino is on
                              the field
          - self.coords     : the inner coordinates, inside the box, used
                              for the rotation with matrix multiplication
@@ -23,6 +23,7 @@ class Tetromino:
                                     roations from spawn
                                 3 = one counterclockwise roation
         """
+        self.tetrimino_tuple = ("L", "J", "z", "s", "T", "l", "o")
         self.tetro_type = tetro_type
         self.rotation_state = 0
         self.rotation_state_virtual = 0
@@ -59,14 +60,15 @@ class Tetromino:
     def return_coords(self, virtual: bool) -> list:
         """
         Implement with virtual coords
+
         Doctest:
-        >>> o = Tetromino("o")
+        >>> o = Tetrimino("o")
         >>> o.return_coords(False)
         [(4, 0), (5, 0), (4, 1), (5, 1)]
-        >>> z = Tetromino("z")
+        >>> z = Tetrimino("z")
         >>> z.return_coords(False)
         [(4, 1), (3, 0), (4, 0), (5, 1)]
-        >>> l = Tetromino("l")
+        >>> l = Tetrimino("l")
         >>> l.return_coords(False)
         [(3, 1), (4, 1), (5, 1), (6, 1)]
         >>> l.box_coords = [(4, 1), (7, 4)]
@@ -126,7 +128,7 @@ class Tetromino:
         by check_rotation()
 
         Doctests:
-        >>> T = Tetromino("T")
+        >>> T = Tetrimino("T")
         >>> T.rotation(True)
         >>> T.virtual_coords
         [array([[0],
@@ -183,25 +185,27 @@ class Tetromino:
         direction = False counterclockwise
 
         -----------------------------------------------------
-        needs:  - the field and the other tetrominos already placed
-                - if there is a tetromino -> field[coords] = 1
+        needs:  - the field and the other Tetriminos already placed
+                - if there is a Tetrimino -> field[coords] in
+                  self.tetrimino_tuple
                 - virtual coords of the desired rotation
                 - old and new rotation state
                 - instructions if a rotation failed (wallkicks)
         -----------------------------------------------------
            checks rotation, remembers old box_coords and if failed then
-           move the tetromino according to the wallkick data
+           move the Tetrimino according to the wallkick data
          - checks if rotation is possible with the self.virtual_coords
            from the method return_coords()
            and compares them to the field and if the one self.virtual_coords
-           is where the field = 1 or its out of the field then the rotation
+           is where the field = "tetrimino Letter"
+           or its out of the field then the rotation
            failed
 
         Doctests:
-        >>> T = Tetromino("T")
+        >>> T = Tetrimino("T")
         >>> field = {}
         >>> coord = [(a, b) for a in range(10) for b in range(23)]
-        >>> for a in coord: field[a] = 0
+        >>> for a in coord: field[a] = "N"
         >>> T.check_rotation(True, field)
         >>> T.rotation_state == 1
         True
@@ -260,15 +264,16 @@ class Tetromino:
                                     self.box_coords[1][1] + new_pos[1])]
                 self.rotation(direction)
                 new_coords = self.return_coords(True)  # new virtual coords
-                for a in new_coords:  # checking if the tetromino hit smth
-                    if field.get(a) is None or field[a] == 1:
+                for a in new_coords:  # checking if the Tetrimino hit smth
+                    if (field.get(a) is None
+                       or field[a] in self.tetrimino_tuple):
                         # the first condition is for checking if the
-                        # tetromino hit another tetromino lying there
+                        # Tetrimino hit another Tetrimino lying there
                         # the second for checking if its outside of the field
                         stop = True
                 if stop is True:
                     # if the rotation didnt work we have to
-                    # put tetromino back at his previous position
+                    # put Tetrimino back at his previous position
                     # so the next position can be tested or
                     # it will stay in place
                     self.box_coords = temp
@@ -326,12 +331,13 @@ class Tetromino:
                                     self.box_coords[1][1] + new_pos[1])]
                 self.rotation(direction)
                 new_coords = self.return_coords(True)  # new virtual coords
-                for a in new_coords:  # checking if the tetromino hit smth
-                    if field.get(a) is None or field[a] == 1:
+                for a in new_coords:  # checking if the Tetrimino hit smth
+                    if (field.get(a) is None
+                       or field[a] in self.tetrimino_tuple):
                         stop = True
                 if stop is True:
                     # if the rotation didnt work we have to
-                    # put tetromino back at his previous position
+                    # put Tetrimino back at his previous position
                     # so the next position can be tested or
                     # it will stay in place
                     self.box_coords = temp
@@ -347,14 +353,14 @@ class Tetromino:
         This function takes a direction (right - True, left - False)
         and a field, a dictionary and checks, if the movement is
         possible. The movement is not possible if the coords are not
-        in the field or another tetromino is in the way
+        in the field or another Tetrimino is in the way
 
         Doctest:
-        >>> T = Tetromino("T")
+        >>> T = Tetrimino("T")
         >>> field = {}
         >>> coord = [(a, b) for a in range(10) for b in range(23)]
-        >>> for a in coord: field[a] = 0
-        >>> field[(6, 1)] = 1
+        >>> for a in coord: field[a] = "N"
+        >>> field[(6, 1)] = "L"
         >>> T.move(True, field)
         >>> T.box_coords == [(3, 0), (5, 2)]
         True
@@ -366,7 +372,7 @@ class Tetromino:
         if direction is True:
             for coord in current_coords:
                 if (field.get((coord[0] + 1, coord[1])) is None
-                   or field[(coord[0] + 1, coord[1])] == 1):
+                   or field[(coord[0] + 1, coord[1])] in self.tetrimino_tuple):
                     return
             self.box_coords = [(self.box_coords[0][0] + 1,
                                 self.box_coords[0][1]),
@@ -375,7 +381,7 @@ class Tetromino:
         else:
             for coord in current_coords:
                 if (field.get((coord[0] - 1, coord[1])) is None
-                   or field[(coord[0] - 1, coord[1])] == 1):
+                   or field[(coord[0] - 1, coord[1])] in self.tetrimino_tuple):
                     return
             self.box_coords = [(self.box_coords[0][0] - 1,
                                 self.box_coords[0][1]),
@@ -384,7 +390,7 @@ class Tetromino:
 
     def fall(self):
         """
-        This function lets the Tetromino move down.
+        This function lets the Tetrimino move down.
         """
         self.box_coords = [(self.box_coords[0][0],
                             self.box_coords[0][1] + 1),
@@ -394,24 +400,26 @@ class Tetromino:
     def check_collision(self, field: dict) -> bool:
         """
         Here we have to check the surroundings, so a collision
-        means the tetrominoes touch each other.
-        This function checks the collision under the tetromino
+        means the Tetriminoes touch each other.
+        This function checks the collision under the Tetrimino
+        True - collision detected
+        False - no collision
 
         Doctest:
-        >>> T = Tetromino("T")
+        >>> T = Tetrimino("T")
         >>> field = {}
         >>> coord = [(a, b) for a in range(10) for b in range(23)]
-        >>> for a in coord: field[a] = 0
-        >>> field[(3, 2)] = 1
+        >>> for a in coord: field[a] = "N"
+        >>> field[(3, 2)] = "L"
         >>> T.check_collision(field)
         True
-        >>> field[(3, 2)] = 0
+        >>> field[(3, 2)] = "N"
         >>> T.check_collision(field)
         False
         """
         current_coords = self.return_coords(False)
         for coord in current_coords:
             if (field.get((coord[0], coord[1] + 1)) is None
-               or field[(coord[0], coord[1] + 1)] == 1):
+               or field[(coord[0], coord[1] + 1)] in self.tetrimino_tuple):
                 return True
         return False
