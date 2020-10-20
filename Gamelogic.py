@@ -44,6 +44,30 @@ class GameLogic:
         increases the score. This function also lets the remaining
         tetriminos above fall down.
         Increases the level if 10 lines were cleared
+
+        Doctest:
+        >>> game = GameLogic()
+        >>> for x in range(10): game.field[(x, 21)] = "L"
+        >>> game.field[(9, 21)] == "L"
+        True
+        >>> game.line_is_full()
+        >>> game.score == 40
+        True
+        >>> game.field[(2, 21)]
+        'N'
+        >>> for x in range(10): game.field[(x, 21)] = "L"
+        >>> game.field[(2, 20)] = "z"
+        >>> game.field[(2, 19)] = "s"
+        >>> game.field[(0, 20)] = "l"
+        >>> game.line_is_full()
+        >>> game.field[(2, 21)]
+        'z'
+        >>> game.field[(2, 20)]
+        's'
+        >>> game.field[(0, 21)]
+        'l'
+        >>> game.field[(0, 20)]
+        'N'
         """
         lines = 0
         highest_line = 0
@@ -69,32 +93,42 @@ class GameLogic:
         elif lines == 4:
             self.score = self.score + 1200*(self.level + 1)
 
+        # increases the level counter and level
         self.level_counter += lines
         if self.level_counter >= 10:
             self.level += 1
             self.level_counter = self.level_counter % 10
 
-        for y in range(highest_line, 0, 1):
+        # lets the remaining tetriminos fall down
+        for y in range(highest_line - 1, 0, -1):
             # goes the opposite way because otherwise the
             # order of the tetriminos will be wrong
             for x in range(10):
-                if field[(x, y)] in self.tetrimino_list:
+                if self.field[(x, y)] in self.tetrimino_list:
                     y2 = y
                     while True:
-                        if (field[(x, y2 + 1)] not in self.tetrimino_list
-                           or field.get(x, y2 + 1) is not None):
-                            y2 += 1
-                        else:
+                        if y2 + 1 == 22:
                             break
-                    field[(x, y2)] = field[(x, y)]
+                        if self.field.get(x, y2 + 1) is None:
+                            break
+                        elif self.field[(x, y2 + 1)] in self.tetrimino_list:
+                            break
+                        else:
+                            y2 += 1
+                    self.field[(x, y2)] = self.field[(x, y)]
+                    self.field[(x, y)] = "N"
 
     def get_gravity(self):
         """
         Returns the gravity according to the level.
 
-        !!! Think about the numbers !!!
-        1 - self.level / 10
-        1 - 10 / 10 = 0 ???
+        Doctest:
+        >>> game = GameLogic()
+        >>> game.get_gravity()
+        1
+        >>> game.level = 31
+        >>> game.get_gravity()
+        0.0
         """
         if self.level == 0:
             return 1
@@ -109,15 +143,29 @@ class GameLogic:
         tetrimino_list, the list will be shuffled and
         the next_tetrimino will be the first element of
         the shuffled list.
+        Doctest:
+        >>> game = GameLogic()
+        >>> game.spawn_tetrimino()
+        >>> game.current_tetrimino.tetro_type
+        'L'
+        >>> game.next_tetrimino
+        'J'
+        >>> game.list_pointer = 6
+        >>> game.spawn_tetrimino()
+        >>> game.current_tetrimino.tetro_type
+        'o'
+        >>> game.tetrimino_list != ["L", "J", "z", "s", "T", "l", "o"]
+        True
         """
-        self.current_tetrimino = Tetrimino(tetrimino_list[list_pointer])
-        if list_pointer + 1 < len(tetrimino_list):
-            self.next_tetrimino = tetrimino_list[list_pointer + 1]
-            list_pointer += 1
+        typee = self.tetrimino_list[self.list_pointer]
+        self.current_tetrimino = Tetrimino(typee)
+        if self.list_pointer + 1 < len(self.tetrimino_list):
+            self.next_tetrimino = self.tetrimino_list[self.list_pointer + 1]
+            self.list_pointer += 1
         else:
             self.shuffle_tetriminos()
-            list_pointer = 0
-            self.next_tetrimino = tetrimino_list[list_pointer]
+            self.list_pointer = 0
+            self.next_tetrimino = self.tetrimino_list[self.list_pointer]
 
     def move(self, direction: bool):
         """
