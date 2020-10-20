@@ -23,6 +23,7 @@ class GameLogic:
                 self.field[(x, y)] = "N"
         self.score = 0
         self.level = 0
+        self.level_counter = 0
         self.tetrimino_list = ["L", "J", "z", "s", "T", "l", "o"]
         self.list_pointer = 0
         self.current_tetrimino = None
@@ -40,16 +41,20 @@ class GameLogic:
         """
         This function counts the amount of
         lines which are full, deletes them and
-        increases the score.
-        !!! the other tiles need to fall down afterwards !!!
+        increases the score. This function also lets the remaining
+        tetriminos above fall down.
+        Increases the level if 10 lines were cleared
         """
         lines = 0
+        highest_line = 0
         for y in range(2, 22, 1):
             count = 0
             for x in range(10):
                 if self.field[(x, y)] in ["L", "J", "z", "s", "T", "l", "o"]:
                     count += 1
             if count == 10:
+                if y > highest_line:
+                    highest_line = y
                 for x in range(10):
                     self.field[(x, y)] = "N"
                 lines += 1
@@ -64,6 +69,25 @@ class GameLogic:
         elif lines == 4:
             self.score = self.score + 1200*(self.level + 1)
 
+        self.level_counter += lines
+        if self.level_counter >= 10:
+            self.level += 1
+            self.level_counter = self.level_counter % 10
+
+        for y in range(highest_line, 0, 1):
+            # goes the opposite way because otherwise the
+            # order of the tetriminos will be wrong
+            for x in range(10):
+                if field[(x, y)] in self.tetrimino_list:
+                    y2 = y
+                    while True:
+                        if (field[(x, y2 + 1)] not in self.tetrimino_list
+                           or field.get(x, y2 + 1) is not None):
+                            y2 += 1
+                        else:
+                            break
+                    field[(x, y2)] = field[(x, y)]
+
     def get_gravity(self):
         """
         Returns the gravity according to the level.
@@ -75,7 +99,7 @@ class GameLogic:
         if self.level == 0:
             return 1
         else:
-            return 1 - self.level / 10
+            return 1 - self.level / 31
 
     def spawn_tetrimino(self):
         """
@@ -146,4 +170,12 @@ class GameLogic:
         self.score += 2
 
     def is_lost(self) -> bool:
-        pass
+        """
+        Checks the line above the playground.
+        If there is a tetrimino locked (field[coords] in self.tetrimino_list)
+        it returns True else it will return False
+        """
+        for x in range(10):
+            if self.field[(x, 1)] == 1:
+                return True
+        return False
