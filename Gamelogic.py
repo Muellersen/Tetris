@@ -171,23 +171,40 @@ class GameLogic:
         """
         This function calls the function Tetrimino.move()
         from the Tetrimino class in Objects.py
+
+        This function works, because it just uses the move function,
+        which is already tested in Objects.py
         """
         self.current_tetrimino.move(direction, self.field)
 
     def move_down(self) -> bool:
         """
         This function checks if the tetrimino can be moved downwards
-        without colliding. If there is no collision, the tetrimino will
+        without colliding. If there is a collision, the tetrimino will
         be locked in.
+        Returns False if there is a collision
+        Returns True if there is no collision
+
+        Doctest:
+        >>> game = GameLogic()
+        >>> game.spawn_tetrimino()
+        >>> game.field[(4, 3)] = "z"
+        >>> game.move_down()
+        True
+        >>> game.move_down()
+        False
+        >>> game.field[(4, 2)]
+        'L'
         """
         if self.current_tetrimino.check_collision(self.field) is True:
             coords = self.current_tetrimino.return_coords(False)
             letter = self.current_tetrimino.tetro_type
             for a in coords:
-                field[a] = letter
+                self.field[a] = letter
             return False
         else:
             self.current_tetrimino.fall()
+            return True
 
     def coords(self):
         """
@@ -203,8 +220,11 @@ class GameLogic:
         This function needs to be called more often as the
         tetrimino should fall down faster.
         """
-        self.move_down()
-        self.score += 1
+        if self.move_down():
+            self.score += 1
+            return True
+        else:
+            return False
 
     def hard_drop(self):
         """
@@ -214,16 +234,32 @@ class GameLogic:
         a short period of time so it looks like
         it falls down instantly
         """
-        self.move_down()
-        self.score += 2
+        if self.move_down():
+            self.score += 2
+            return True
+        else:
+            return False
 
     def is_lost(self) -> bool:
         """
         Checks the line above the playground.
         If there is a tetrimino locked (field[coords] in self.tetrimino_list)
         it returns True else it will return False
+
+        Doctest:
+        >>> game = GameLogic()
+        >>> game.spawn_tetrimino()
+        >>> game.is_lost()
+        False
+        >>> game.field[(4, 2)] = "z"
+        >>> game.move_down()
+        False
+        >>> game.field[(4, 1)]
+        'L'
+        >>> game.is_lost()
+        True
         """
         for x in range(10):
-            if self.field[(x, 1)] == 1:
+            if self.field[(x, 1)] in self.tetrimino_list:
                 return True
         return False
