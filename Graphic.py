@@ -13,6 +13,7 @@ class Graphic:
         self.x = 10 * self.pixel_size
         self.y = 20 * self.pixel_size
         self.root = Tk()
+        self.root.geometry("1028x720+100+0")
         self.colors = {"L": "orange", "z": "red", "s": "green", "T": "purple",
                        "o": "yellow", "l": "cyan", "J": "blue", "N": "black"}
 
@@ -23,7 +24,7 @@ class Graphic:
             for y in range(5, self.y, 26):
                 self.canvas.create_rectangle(x, y, x + 24, y + 24,
                                              fill="black")
-        self.canvas.pack()
+        self.canvas.place(x=389, y=20)
 
     def update_canvas(self, field: dict):
         self.canvas.delete(ALL)
@@ -34,8 +35,10 @@ class Graphic:
                 self.canvas.create_rectangle(x, y, x + 24, y + 24,
                                              fill=color)
 
-    def score_co(self, score):
-        pass
+    def score_co(self, score, level, lines):
+        self.label1 = Label(self.root, text=score + lines,
+                            height=100, width=55, bg="grey")
+        self.label1.pack(side=LEFT)
 
     def next_tetrimino(self, tetrimino):
         pass
@@ -51,4 +54,5 @@ for x in range(10):
 g = Graphic()
 g.init_canvas()
 g.update_canvas(field)
+g.score_co(4, 3, 0)
 g.root.mainloop()
