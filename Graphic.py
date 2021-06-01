@@ -5,8 +5,10 @@ Tetris - Graphic
 from tkinter import *
 import time
 from Gamelogic import *
+from Objects import *
 
 
+# todo: comments, movement, rotation 
 class Graphic:
     def __init__(self):
         self.pixel_size = 25
@@ -16,6 +18,11 @@ class Graphic:
         self.root.geometry("1028x720+100+0")
         self.colors = {"L": "orange", "z": "red", "s": "green", "T": "purple",
                        "o": "yellow", "l": "cyan", "J": "blue", "N": "black"}
+        self.field = {}
+        for x in range(10):
+            for y in range(22):
+                self.field[(x, y)] = "N"
+        self.game = GameLogic()
 
     def init_canvas(self):
         self.canvas = Canvas(self.root, height=self.y + 25, width=self.x + 15)
@@ -26,11 +33,11 @@ class Graphic:
                                              fill="black")
         self.canvas.place(x=389, y=20)
 
-    def update_canvas(self, field: dict):
+    def update_canvas(self):
         self.canvas.delete(ALL)
         for x in range(5, self.x, 26):
             for y in range(5, self.y, 26):
-                tetri_type = field[((x - 5) // 26, (y - 5) // 26)]
+                tetri_type = self.field[((x - 5) // 26, (y - 5) // 26)]
                 color = self.colors[tetri_type]
                 self.canvas.create_rectangle(x, y, x + 24, y + 24,
                                              fill=color)
@@ -41,7 +48,21 @@ class Graphic:
         self.label1.pack(side=LEFT)
 
     def next_tetrimino(self, tetrimino):
-        pass
+        self.game.spawn_tetrimino()
+        current_tetrimino = self.game.current_tetrimino
+        tetrimino_coords = current_tetrimino.return_coords(False)
+        for coord in tetrimino_coords:
+            self.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
+
+    def gravity(self):
+        current_tetrimino = self.game.current_tetrimino
+        tetrimino_coords = current_tetrimino.return_coords(False)
+        for coord in tetrimino_coords:
+            self.field[(coord[0], coord[1])] = "N"
+        current_tetrimino.fall()
+        tetrimino_coords = current_tetrimino.return_coords(False)
+        for coord in tetrimino_coords:
+            self.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
 
     def design(self):
         pass
@@ -53,6 +74,9 @@ for x in range(10):
         field[(x, y)] = "N"
 g = Graphic()
 g.init_canvas()
-g.update_canvas(field)
+g.update_canvas()
+g.next_tetrimino("")
+g.gravity()
+g.update_canvas()
 g.score_co(4, 3, 0)
 g.root.mainloop()
