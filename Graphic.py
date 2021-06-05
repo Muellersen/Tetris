@@ -4,11 +4,14 @@ Tetris - Graphic
 """
 from tkinter import *
 import time
+
+from numpy.core.fromnumeric import _swapaxes_dispatcher
 from Gamelogic import *
 from Objects import *
 
 
 # todo: comments, movement, rotation 
+# the gamelogic already has a field and change everything regarding the field
 class Graphic:
     def __init__(self):
         self.pixel_size = 25
@@ -18,7 +21,7 @@ class Graphic:
         self.root.geometry("1028x720+100+0")
         self.colors = {"L": "orange", "z": "red", "s": "green", "T": "purple",
                        "o": "yellow", "l": "cyan", "J": "blue", "N": "black"}
-        self.field = {}
+        self.field = {}  # not needed delete pls
         for x in range(10):
             for y in range(22):
                 self.field[(x, y)] = "N"
@@ -54,7 +57,7 @@ class Graphic:
         for coord in tetrimino_coords:
             self.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
 
-    def gravity(self):
+    def apply_gravity(self):
         current_tetrimino = self.game.current_tetrimino
         tetrimino_coords = current_tetrimino.return_coords(False)
         for coord in tetrimino_coords:
@@ -64,19 +67,31 @@ class Graphic:
         for coord in tetrimino_coords:
             self.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
 
-    def design(self):
+    def load_design(self):
         pass
 
 
-field = {}
-for x in range(10):
-    for y in range(22):
-        field[(x, y)] = "N"
 g = Graphic()
 g.init_canvas()
 g.update_canvas()
 g.next_tetrimino("")
-g.gravity()
-g.update_canvas()
 g.score_co(4, 3, 0)
-g.root.mainloop()
+# for x in range(6):
+#     g.gravity()
+#     g.update_canvas()
+#     g.root.update_idletasks()
+#     g.root.update()
+#     time.sleep(0.5)
+# g.next_tetrimino("")
+# for x in range(6):
+#     g.gravity()
+#     g.update_canvas()
+#     g.root.update_idletasks()
+#     g.root.update()
+#     time.sleep(0.5)
+while(True):
+    g.apply_gravity()
+    g.update_canvas()
+    g.root.update_idletasks()
+    g.root.update()
+# g.root.mainloop()

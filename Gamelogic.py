@@ -158,7 +158,7 @@ class GameLogic:
         True
         """
         typee = self.tetrimino_list[self.list_pointer]
-        self.current_tetrimino = Tetrimino(typee)
+        self.current_tetrimino = Tetrimino(typee)  # sets the tetrimino
         if self.list_pointer + 1 < len(self.tetrimino_list):
             self.next_tetrimino = self.tetrimino_list[self.list_pointer + 1]
             self.list_pointer += 1
