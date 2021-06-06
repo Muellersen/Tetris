@@ -10,10 +10,10 @@ from Gamelogic import *
 from Objects import *
 
 
-# todo: comments, movement, rotation 
+# todo: comments, movement, rotation
 # the gamelogic already has a field and change everything regarding the field
 class Graphic:
-    def __init__(self):
+    def __init__(self, game: GameLogic):
         self.pixel_size = 25
         self.x = 10 * self.pixel_size
         self.y = 20 * self.pixel_size
@@ -21,10 +21,10 @@ class Graphic:
         self.root.geometry("1028x720+100+0")
         self.colors = {"L": "orange", "z": "red", "s": "green", "T": "purple",
                        "o": "yellow", "l": "cyan", "J": "blue", "N": "black"}
-        self.field = {}  # not needed delete pls
-        for x in range(10):
-            for y in range(22):
-                self.field[(x, y)] = "N"
+        # self.field = {}  # not needed delete pls
+        # for x in range(10):
+        #     for y in range(22):
+        #         self.field[(x, y)] = "N"
         self.game = GameLogic()
 
     def init_canvas(self):
@@ -40,7 +40,7 @@ class Graphic:
         self.canvas.delete(ALL)
         for x in range(5, self.x, 26):
             for y in range(5, self.y, 26):
-                tetri_type = self.field[((x - 5) // 26, (y - 5) // 26)]
+                tetri_type = self.game.field[((x - 5) // 26, (y - 5) // 26)]
                 color = self.colors[tetri_type]
                 self.canvas.create_rectangle(x, y, x + 24, y + 24,
                                              fill=color)
@@ -55,17 +55,17 @@ class Graphic:
         current_tetrimino = self.game.current_tetrimino
         tetrimino_coords = current_tetrimino.return_coords(False)
         for coord in tetrimino_coords:
-            self.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
+            self.game.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
 
     def apply_gravity(self):
         current_tetrimino = self.game.current_tetrimino
         tetrimino_coords = current_tetrimino.return_coords(False)
         for coord in tetrimino_coords:
-            self.field[(coord[0], coord[1])] = "N"
-        current_tetrimino.fall()
+            self.game.field[(coord[0], coord[1])] = "N"
+        self.game.move_down()
         tetrimino_coords = current_tetrimino.return_coords(False)
         for coord in tetrimino_coords:
-            self.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
+            self.game.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
 
     def load_design(self):
         pass
@@ -94,4 +94,5 @@ while(True):
     g.update_canvas()
     g.root.update_idletasks()
     g.root.update()
+    time.sleep(0.3)
 # g.root.mainloop()
