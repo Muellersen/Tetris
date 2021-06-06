@@ -19,8 +19,11 @@ class GameLogic:
     def __init__(self):
         self.field = {}
         for x in range(10):
-            for y in range(22):
-                self.field[(x, y)] = "N"
+            for y in range(23):
+                if y == 22:
+                    self.field[(x, y)] = "X"
+                else:    
+                    self.field[(x, y)] = "N"
         self.score = 0
         self.level = 0
         self.level_counter = 0
@@ -174,6 +177,8 @@ class GameLogic:
 
         This function works, because it just uses the move function,
         which is already tested in Objects.py
+        True - right
+        False - left
         """
         self.current_tetrimino.move(direction, self.field)
 
@@ -188,7 +193,7 @@ class GameLogic:
         Doctest:
         >>> game = GameLogic()
         >>> game.spawn_tetrimino()
-        >>> game.field[(4, 3)] = "z"
+        >>> game.field[(4, 3)] = "X"
         >>> game.move_down()
         True
         >>> game.move_down()
@@ -196,14 +201,21 @@ class GameLogic:
         >>> game.field[(4, 2)]
         'L'
         """
+        coords = self.current_tetrimino.return_coords(False)
+        letter = self.current_tetrimino.tetro_type
         if self.current_tetrimino.check_collision(self.field) is True:
-            coords = self.current_tetrimino.return_coords(False)
-            letter = self.current_tetrimino.tetro_type
             for a in coords:
                 self.field[a] = letter
             return False
         else:
+            for a in coords:
+                self.field[a] = "N"
             self.current_tetrimino.fall()
+            # set field
+            coords = self.current_tetrimino.return_coords(False)
+            letter = self.current_tetrimino.tetro_type
+            for a in coords:
+                self.field[a] = letter
             return True
 
     def coords(self):

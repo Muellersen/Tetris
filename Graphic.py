@@ -25,7 +25,7 @@ class Graphic:
         # for x in range(10):
         #     for y in range(22):
         #         self.field[(x, y)] = "N"
-        self.game = GameLogic()
+        self.game = game
 
     def init_canvas(self):
         self.canvas = Canvas(self.root, height=self.y + 25, width=self.x + 15)
@@ -40,7 +40,7 @@ class Graphic:
         self.canvas.delete(ALL)
         for x in range(5, self.x, 26):
             for y in range(5, self.y, 26):
-                tetri_type = self.game.field[((x - 5) // 26, (y - 5) // 26)]
+                tetri_type = self.game.field[((x - 5) // 26, ((y - 5) // 26) + 2)]
                 color = self.colors[tetri_type]
                 self.canvas.create_rectangle(x, y, x + 24, y + 24,
                                              fill=color)
@@ -50,7 +50,7 @@ class Graphic:
                             height=100, width=55, bg="grey")
         self.label1.pack(side=LEFT)
 
-    def next_tetrimino(self, tetrimino):
+    def next_tetrimino(self):
         self.game.spawn_tetrimino()
         current_tetrimino = self.game.current_tetrimino
         tetrimino_coords = current_tetrimino.return_coords(False)
@@ -70,12 +70,13 @@ class Graphic:
     def load_design(self):
         pass
 
-
-g = Graphic()
+game = GameLogic()
+g = Graphic(game)
 g.init_canvas()
 g.update_canvas()
-g.next_tetrimino("")
+g.next_tetrimino()
 g.score_co(4, 3, 0)
+# game.field[(4, 23)] = "L"
 # for x in range(6):
 #     g.gravity()
 #     g.update_canvas()
@@ -90,7 +91,11 @@ g.score_co(4, 3, 0)
 #     g.root.update()
 #     time.sleep(0.5)
 while(True):
-    g.apply_gravity()
+    # direction = 
+    game.move(direction)
+    if game.move_down() is False:
+        game.spawn_tetrimino()
+    # print(g.game.current_tetrimino.return_coords(False))
     g.update_canvas()
     g.root.update_idletasks()
     g.root.update()

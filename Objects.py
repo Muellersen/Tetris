@@ -417,9 +417,11 @@ class Tetrimino:
         >>> T.check_collision(field)
         False
         """
+        # tetriminos collide with themselves
         current_coords = self.return_coords(False)
         for coord in current_coords:
-            if (field.get((coord[0], coord[1] + 1)) is None
-               or field[(coord[0], coord[1] + 1)] in self.tetrimino_tuple):
+            if ((field.get((coord[0], coord[1] + 1)) == "X"
+               or field[(coord[0], coord[1] + 1)] in self.tetrimino_tuple)
+               and (coord[0], coord[1] + 1) not in current_coords):
                 return True
         return False
