@@ -371,6 +371,9 @@ class Tetrimino:
         current_coords = self.return_coords(False)
         if direction is True:
             for coord in current_coords:
+                
+                if (coord[0] + 1, coord[1]) in current_coords:
+                    continue
                 if (field.get((coord[0] + 1, coord[1])) is None
                    or field[(coord[0] + 1, coord[1])] in self.tetrimino_tuple):
                     return
@@ -380,6 +383,8 @@ class Tetrimino:
                                 self.box_coords[1][1])]
         else:
             for coord in current_coords:
+                if (coord[0] - 1, coord[1]) in current_coords:
+                    continue
                 if (field.get((coord[0] - 1, coord[1])) is None
                    or field[(coord[0] - 1, coord[1])] in self.tetrimino_tuple):
                     return

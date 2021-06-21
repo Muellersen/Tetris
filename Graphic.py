@@ -91,13 +91,17 @@ g.score_co(4, 3, 0)
 #     g.root.update()
 #     time.sleep(0.5)
 while(True):
-    # direction = 
-    game.move(direction)
+    # direction =
+    game.move(True)
+    g.update_canvas()
+    g.root.update_idletasks()
+    g.root.update()
+    time.sleep(0.3)
     if game.move_down() is False:
         game.spawn_tetrimino()
     # print(g.game.current_tetrimino.return_coords(False))
     g.update_canvas()
     g.root.update_idletasks()
     g.root.update()
-    time.sleep(0.3)
+    
 # g.root.mainloop()

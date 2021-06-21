@@ -179,8 +179,23 @@ class GameLogic:
         which is already tested in Objects.py
         True - right
         False - left
+
+        Doctest:
+        >>> game = GameLogic()
+        >>> game.spawn_tetrimino()
+        >>> game.
         """
+        coords = self.coords()
+        for a in coords:
+                self.field[a] = "N"
         self.current_tetrimino.move(direction, self.field)
+        # coords need to be changed afterwards
+        coords = self.coords()
+        letter = self.current_tetrimino.tetro_type
+        for a in coords:
+            self.field[a] = letter
+        return True
+
 
     def move_down(self) -> bool:
         """
