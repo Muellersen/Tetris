@@ -57,15 +57,10 @@ class Graphic:
         for coord in tetrimino_coords:
             self.game.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
 
-    def apply_gravity(self):
-        current_tetrimino = self.game.current_tetrimino
-        tetrimino_coords = current_tetrimino.return_coords(False)
-        for coord in tetrimino_coords:
-            self.game.field[(coord[0], coord[1])] = "N"
-        self.game.move_down()
-        tetrimino_coords = current_tetrimino.return_coords(False)
-        for coord in tetrimino_coords:
-            self.game.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
+    def event_handler(self, event):
+        self.update_canvas()
+        self.root.update_idletasks()
+        self.root.update()
 
     def load_design(self):
         pass
@@ -76,6 +71,10 @@ g.init_canvas()
 g.update_canvas()
 g.next_tetrimino()
 g.score_co(4, 3, 0)
+g.root.bind("<Up>", game.rotate_right)  # call function that calls the movement func first then update canvas
+g.root.bind("x", game.rotate_left)
+g.root.bind("<Right>", game.move_right)
+g.root.bind("<Left>", game.move_left)
 # game.field[(4, 23)] = "L"
 # for x in range(6):
 #     g.gravity()
@@ -91,8 +90,7 @@ g.score_co(4, 3, 0)
 #     g.root.update()
 #     time.sleep(0.5)
 while(True):
-    # direction =
-    game.move(True)
+    # print(time.time())
     g.update_canvas()
     g.root.update_idletasks()
     g.root.update()

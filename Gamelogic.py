@@ -170,7 +170,7 @@ class GameLogic:
             self.list_pointer = 0
             self.next_tetrimino = self.tetrimino_list[self.list_pointer]
 
-    def move(self, direction: bool):
+    def move_left(self, event):
         """
         This function calls the function Tetrimino.move()
         from the Tetrimino class in Objects.py
@@ -188,7 +188,33 @@ class GameLogic:
         coords = self.coords()
         for a in coords:
                 self.field[a] = "N"
-        self.current_tetrimino.move(direction, self.field)
+        self.current_tetrimino.move(False, self.field)
+        # coords need to be changed afterwards
+        coords = self.coords()
+        letter = self.current_tetrimino.tetro_type
+        for a in coords:
+            self.field[a] = letter
+        return True
+
+    def move_right(self, event):
+        """
+        This function calls the function Tetrimino.move()
+        from the Tetrimino class in Objects.py
+
+        This function works, because it just uses the move function,
+        which is already tested in Objects.py
+        True - right
+        False - left
+
+        Doctest:
+        >>> game = GameLogic()
+        >>> game.spawn_tetrimino()
+        >>> game.
+        """
+        coords = self.coords()
+        for a in coords:
+                self.field[a] = "N"
+        self.current_tetrimino.move(True, self.field)
         # coords need to be changed afterwards
         coords = self.coords()
         letter = self.current_tetrimino.tetro_type
@@ -197,7 +223,7 @@ class GameLogic:
         return True
 
 
-    def move_down(self) -> bool:
+    def move_down(self):
         """
         This function checks if the tetrimino can be moved downwards
         without colliding. If there is a collision, the tetrimino will
@@ -290,3 +316,33 @@ class GameLogic:
             if self.field[(x, 1)] in self.tetrimino_list:
                 return True
         return False
+
+    def rotate_right(self, event):
+        """
+        This function manages the rotation.
+        First it rotates and then it checks the rotation
+        then it will asign the new coordinates
+        """
+        coords = self.current_tetrimino.return_coords(False)
+        letter = self.current_tetrimino.tetro_type
+        for a in coords:
+            self.field[a] = "N"
+        self.current_tetrimino.check_rotation(True, self.field)
+        coords = self.current_tetrimino.return_coords(False)
+        for a in coords:
+            self.field[a] = letter
+
+    def rotate_left(self, event):
+        """
+        This function manages the rotation.
+        First it rotates and then it checks the rotation
+        then it will asign the new coordinates
+        """
+        coords = self.current_tetrimino.return_coords(False)
+        letter = self.current_tetrimino.tetro_type
+        for a in coords:
+            self.field[a] = "N"
+        self.current_tetrimino.check_rotation(False, self.field)
+        coords = self.current_tetrimino.return_coords(False)
+        for a in coords:
+            self.field[a] = letter
