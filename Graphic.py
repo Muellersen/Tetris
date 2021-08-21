@@ -58,6 +58,9 @@ class Graphic:
             self.game.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
 
     def event_handler(self, event):
+        print(event)
+        if event == "<Up>":
+            game.rotate_right()
         self.update_canvas()
         self.root.update_idletasks()
         self.root.update()
@@ -71,7 +74,7 @@ g.init_canvas()
 g.update_canvas()
 g.next_tetrimino()
 g.score_co(4, 3, 0)
-g.root.bind("<Up>", game.rotate_right)  # call function that calls the movement func first then update canvas
+g.root.bind("<Up>", g.event_handler)  # call function that calls the movement func first then update canvas
 g.root.bind("x", game.rotate_left)
 g.root.bind("<Right>", game.move_right)
 g.root.bind("<Left>", game.move_left)
