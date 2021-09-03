@@ -170,7 +170,7 @@ class GameLogic:
             self.list_pointer = 0
             self.next_tetrimino = self.tetrimino_list[self.list_pointer]
 
-    def move_left(self, event):
+    def move_left(self):
         """
         This function calls the function Tetrimino.move()
         from the Tetrimino class in Objects.py
@@ -187,7 +187,7 @@ class GameLogic:
         """
         coords = self.coords()
         for a in coords:
-                self.field[a] = "N"
+            self.field[a] = "N"
         self.current_tetrimino.move(False, self.field)
         # coords need to be changed afterwards
         coords = self.coords()
@@ -196,7 +196,7 @@ class GameLogic:
             self.field[a] = letter
         return True
 
-    def move_right(self, event):
+    def move_right(self):
         """
         This function calls the function Tetrimino.move()
         from the Tetrimino class in Objects.py
@@ -213,7 +213,7 @@ class GameLogic:
         """
         coords = self.coords()
         for a in coords:
-                self.field[a] = "N"
+            self.field[a] = "N"
         self.current_tetrimino.move(True, self.field)
         # coords need to be changed afterwards
         coords = self.coords()
@@ -221,7 +221,6 @@ class GameLogic:
         for a in coords:
             self.field[a] = letter
         return True
-
 
     def move_down(self):
         """
@@ -317,7 +316,7 @@ class GameLogic:
                 return True
         return False
 
-    def rotate_right(self, event):
+    def rotate_right(self):
         """
         This function manages the rotation.
         First it rotates and then it checks the rotation
@@ -332,7 +331,7 @@ class GameLogic:
         for a in coords:
             self.field[a] = letter
 
-    def rotate_left(self, event):
+    def rotate_left(self):
         """
         This function manages the rotation.
         First it rotates and then it checks the rotation

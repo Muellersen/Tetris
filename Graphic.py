@@ -59,14 +59,21 @@ class Graphic:
 
     def event_handler(self, event):
         print(event)
-        if event == "<Up>":
+        if event.keysym == "Up":
             game.rotate_right()
+        elif event.keysym == "x":
+            game.rotate_left()
+        elif event.keysym == "Right":
+            game.move_right()
+        elif event.keysym == "Left":
+            game.move_left()
         self.update_canvas()
         self.root.update_idletasks()
         self.root.update()
 
     def load_design(self):
         pass
+
 
 game = GameLogic()
 g = Graphic(game)
@@ -75,9 +82,9 @@ g.update_canvas()
 g.next_tetrimino()
 g.score_co(4, 3, 0)
 g.root.bind("<Up>", g.event_handler)  # call function that calls the movement func first then update canvas
-g.root.bind("x", game.rotate_left)
-g.root.bind("<Right>", game.move_right)
-g.root.bind("<Left>", game.move_left)
+g.root.bind("x", g.event_handler)
+g.root.bind("<Right>", g.event_handler)
+g.root.bind("<Left>", g.event_handler)
 # game.field[(4, 23)] = "L"
 # for x in range(6):
 #     g.gravity()
