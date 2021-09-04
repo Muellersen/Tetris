@@ -22,7 +22,7 @@ class GameLogic:
             for y in range(23):
                 if y == 22:
                     self.field[(x, y)] = "X"
-                else:    
+                else:
                     self.field[(x, y)] = "N"
         self.score = 0
         self.level = 0
@@ -88,13 +88,13 @@ class GameLogic:
         if lines == 0:
             return
         elif lines == 1:
-            self.score = self.score + 40*(self.level + 1)
+            self.score = self.score + 40 * (self.level + 1)
         elif lines == 2:
-            self.score = self.score + 100*(self.level + 1)
+            self.score = self.score + 100 * (self.level + 1)
         elif lines == 3:
-            self.score = self.score + 300*(self.level + 1)
+            self.score = self.score + 300 * (self.level + 1)
         elif lines == 4:
-            self.score = self.score + 1200*(self.level + 1)
+            self.score = self.score + 1200 * (self.level + 1)
 
         # increases the level counter and level
         self.level_counter += lines
