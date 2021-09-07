@@ -13,18 +13,15 @@ from Objects import *
 # todo: comments, movement, rotation
 # the gamelogic already has a field and change everything regarding the field
 class Graphic:
-    def __init__(self, game: GameLogic):
+    def __init__(self, game: GameLogic, state: int):
         self.pixel_size = 25
         self.x = 10 * self.pixel_size
         self.y = 20 * self.pixel_size
+        self.state = state
         self.root = Tk()
         self.root.geometry("1028x720+100+0")
         self.colors = {"L": "orange", "z": "red", "s": "green", "T": "purple",
                        "o": "yellow", "l": "cyan", "J": "blue", "N": "black"}
-        # self.field = {}  # not needed delete pls
-        # for x in range(10):
-        #     for y in range(22):
-        #         self.field[(x, y)] = "N"
         self.game = game
 
     def init_canvas(self):
@@ -58,58 +55,28 @@ class Graphic:
             self.game.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
 
     def event_handler(self, event):
-        print(event)
-        if event.keysym == "Up":
-            game.rotate_right()
-        elif event.keysym == "x":
-            game.rotate_left()
-        elif event.keysym == "Right":
-            game.move_right()
-        elif event.keysym == "Left":
-            game.move_left()
-        self.update_canvas()
-        self.root.update_idletasks()
-        self.root.update()
+        # print(event)
+        key = event.keysym
+        if key == "Up":
+            self.game.rotate_right()
+        elif key == "x":
+            self.game.rotate_left()
+        elif key == "Right":
+            self.game.move_right()
+        elif key == "Left":
+            self.game.move_left()
+        elif key == "Escape":
+            if self.state == 2: 
+                self.state = -1
+            else:
+                self.state = 2
+            # make function to pause the game
+        # self.update_canvas()
+        # self.root.update_idletasks()
+        # self.root.update()
 
-    def load_design(self):
+    def load_start_menu(self):
         pass
 
-
-game = GameLogic()
-g = Graphic(game)
-g.init_canvas()
-g.update_canvas()
-g.next_tetrimino()
-g.score_co(4, 3, 0)
-g.root.bind("<Up>", g.event_handler)  # call function that calls the movement func first then update canvas
-g.root.bind("x", g.event_handler)
-g.root.bind("<Right>", g.event_handler)
-g.root.bind("<Left>", g.event_handler)
-# game.field[(4, 23)] = "L"
-# for x in range(6):
-#     g.gravity()
-#     g.update_canvas()
-#     g.root.update_idletasks()
-#     g.root.update()
-#     time.sleep(0.5)
-# g.next_tetrimino("")
-# for x in range(6):
-#     g.gravity()
-#     g.update_canvas()
-#     g.root.update_idletasks()
-#     g.root.update()
-#     time.sleep(0.5)
-while(True):
-    # print(time.time())
-    g.update_canvas()
-    g.root.update_idletasks()
-    g.root.update()
-    time.sleep(0.3)
-    if game.move_down() is False:
-        game.spawn_tetrimino()
-    # print(g.game.current_tetrimino.return_coords(False))
-    g.update_canvas()
-    g.root.update_idletasks()
-    g.root.update()
-    
-# g.root.mainloop()
+    def load_pause_menu(self):
+        pass

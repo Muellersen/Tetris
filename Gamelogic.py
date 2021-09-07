@@ -311,8 +311,10 @@ class GameLogic:
         >>> game.is_lost()
         True
         """
+        # doesnt work as all tetriminos that were just spawned cause the function to 
+        # return true
         for x in range(10):
-            if self.field[(x, 1)] in self.tetrimino_list:
+            if self.field[(x, 1)] in self.tetrimino_list and self.field[(x, 3)] in self.tetrimino_list:
                 return True
         return False
 
