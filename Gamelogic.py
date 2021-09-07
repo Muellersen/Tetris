@@ -27,6 +27,7 @@ class GameLogic:
         self.score = 0
         self.level = 1
         self.line_counter = 0
+        self.level_counter = 0
         self.tetrimino_list = ["L", "J", "z", "s", "T", "l", "o"]
         self.list_pointer = 0
         self.current_tetrimino = None
@@ -286,11 +287,6 @@ class GameLogic:
         a short period of time so it looks like
         it falls down instantly
         """
-        # if self.move_down():
-        #     self.score += 2
-        #     return True
-        # else:
-        #     return False
         while self.move_down():
             self.score += 2
 

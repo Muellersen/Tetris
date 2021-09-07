@@ -34,6 +34,7 @@ while g.state != -1:
         previous_state = 1
     while g.state == 1:
         # game active
+        # while loop for player control and delay
         timeout = time() + (0.8 - (game.level - 1) * 0.007)**(game.level - 1)
         while True:
             g.update_canvas()
@@ -41,8 +42,10 @@ while g.state != -1:
             g.root.update()
             if time() > timeout:
                 break
+
         if game.move_down() is False:
             game.spawn_tetrimino()
+        game.line_is_full()
         print(game.score)
         if game.is_lost():
             g.state = -1
