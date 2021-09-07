@@ -43,9 +43,12 @@ class Graphic:
                                              fill=color)
 
     def init_score(self):
-        self.label1 = Label(self.root, text=self.game.score + self.game.line_counter,
+        self.label1 = Label(self.root, text=0,
                             height=100, width=55, bg="grey")
         self.label1.pack(side=LEFT)
+
+    def update_score(self):
+        self.label1['text'] = self.game.score
 
     def next_tetrimino(self):
         self.game.spawn_tetrimino()

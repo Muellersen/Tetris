@@ -19,7 +19,6 @@ while g.state != -1:
         g.state = 1
 
     if g.state == 1 and previous_state == 0:
-        delay = 1
         g.init_canvas()
         g.update_canvas()
         g.next_tetrimino()
@@ -38,6 +37,7 @@ while g.state != -1:
         timeout = time() + (0.8 - (game.level - 1) * 0.007)**(game.level - 1)
         while True:
             g.update_canvas()
+            g.update_score()
             g.root.update_idletasks()
             g.root.update()
             if time() > timeout:
@@ -46,11 +46,12 @@ while g.state != -1:
         if game.move_down() is False:
             game.spawn_tetrimino()
         game.line_is_full()
-        print(game.score)
+
         if game.is_lost():
             g.state = -1
             break
         g.update_canvas()
+        g.update_score()
         g.root.update_idletasks()
         g.root.update()
 
