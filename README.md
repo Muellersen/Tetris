@@ -9,4 +9,4 @@ Unfinished, as I'm focused on studying computer science.
 
 # What needs to be done?
 - GUI
-- Graphical implementation with tkinter (next project will be with pygame)
+- Graphical implementation with tkinter

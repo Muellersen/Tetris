@@ -2,6 +2,7 @@
 Copyright 2020 Patrick Müller
 Tetris
 """
+# check tkinter for design and to do the menu and pause option
 from Gamelogic import *
 from Graphic import *
 from time import time
@@ -23,7 +24,7 @@ while g.state != -1:
         g.update_canvas()
         g.next_tetrimino()
         g.init_score()
-        g.root.bind("<Up>", g.event_handler) 
+        g.root.bind("<Up>", g.event_handler)
         g.root.bind("x", g.event_handler)
         g.root.bind("<Right>", g.event_handler)
         g.root.bind("<Left>", g.event_handler)
