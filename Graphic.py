@@ -42,8 +42,8 @@ class Graphic:
                 self.canvas.create_rectangle(x, y, x + 24, y + 24,
                                              fill=color)
 
-    def score_co(self, score, level, lines):
-        self.label1 = Label(self.root, text=score + lines,
+    def init_score(self):
+        self.label1 = Label(self.root, text=self.game.score + self.game.line_counter,
                             height=100, width=55, bg="grey")
         self.label1.pack(side=LEFT)
 
@@ -55,22 +55,38 @@ class Graphic:
             self.game.field[(coord[0], coord[1])] = current_tetrimino.tetro_type
 
     def event_handler(self, event):
-        # print(event)
+        self.root.unbind("<Up>")
+        self.root.unbind("<Left>")
+        self.root.unbind("<Right>")
+        self.root.unbind("<Down>")
+        self.root.unbind("<space>")
+        self.root.unbind("x")
         key = event.keysym
         if key == "Up":
             self.game.rotate_right()
+        elif key == "Down":
+            self.game.soft_drop()
         elif key == "x":
             self.game.rotate_left()
         elif key == "Right":
             self.game.move_right()
         elif key == "Left":
             self.game.move_left()
+        elif key == "space":
+            self.game.hard_drop()
         elif key == "Escape":
-            if self.state == 2: 
+            if self.state == 2:
                 self.state = -1
             else:
                 self.state = 2
-            # make function to pause the game
+
+        self.root.bind("<Up>", self.event_handler)
+        self.root.bind("x", self.event_handler)
+        self.root.bind("<Right>", self.event_handler)
+        self.root.bind("<Left>", self.event_handler)
+        self.root.bind("<Down>", self.event_handler)
+        self.root.bind("<space>", self.event_handler)
+        # make function to pause the game
         # self.update_canvas()
         # self.root.update_idletasks()
         # self.root.update()
