@@ -3,6 +3,7 @@ Copyright 2020 Patrick Müller
 Tetris
 """
 # check tkinter for design and to do the menu and pause option
+# there is an error if rotate at the bottom
 from Gamelogic import *
 from Graphic import *
 from time import time
