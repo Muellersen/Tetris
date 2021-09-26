@@ -18,9 +18,9 @@ class GameLogic:
     def __init__(self):
         self.field = {}
         for x in range(10):
-            for y in range(24):
-                if y >= 22:
-                    self.field[(x, y)] = "L"
+            for y in range(23):
+                if y == 22:
+                    self.field[(x, y)] = "X"
                 else:
                     self.field[(x, y)] = "N"
         self.score = 0
@@ -290,6 +290,7 @@ class GameLogic:
             self.score += 2
 
     def is_lost(self) -> bool:
+        # sometimes rotation at top causes game to end 
         """
         Checks the line above the playground.
         If there is a tetrimino locked (field[coords] in self.tetrimino_list)
@@ -342,3 +343,7 @@ class GameLogic:
         coords = self.current_tetrimino.return_coords(False)
         for a in coords:
             self.field[a] = letter
+
+    def get_hover_coords(self):
+        # 
+        pass

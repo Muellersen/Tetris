@@ -42,6 +42,12 @@ class Graphic:
                 self.canvas.create_rectangle(x, y, x + 24, y + 24,
                                              fill=color)
 
+    def init_next_canvas(self):
+        pass
+
+    def update_next_canvas(self):
+        pass
+
     def init_score(self):
         self.label1 = Label(self.root, text=0,
                             height=100, width=55, bg="grey")
