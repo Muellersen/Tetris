@@ -94,7 +94,7 @@ class Tetrimino:
                     self.box_coords[1]]
         elif self.tetro_type in ("s", "z", "T", "L", "J"):
             for a in coords:
-                result = result + [(a[0] + start_x, -1*a[1] + start_y)]
+                result = result + [(a[0] + start_x, -1 * a[1] + start_y)]
                 #                                   --------
                 # here we have to invert the a[1] because the self.coords
                 # are represented with the normal coordinate system
@@ -265,8 +265,7 @@ class Tetrimino:
                 self.rotation(direction)
                 new_coords = self.return_coords(True)  # new virtual coords
                 for a in new_coords:  # checking if the Tetrimino hit smth
-                    if (field.get(a) is None
-                       or field[a] in self.tetrimino_tuple):
+                    if (field.get(a) is None or field[a] in self.tetrimino_tuple):
                         # the first condition is for checking if the
                         # Tetrimino hit another Tetrimino lying there
                         # the second for checking if its outside of the field
@@ -371,11 +370,9 @@ class Tetrimino:
         current_coords = self.return_coords(False)
         if direction is True:
             for coord in current_coords:
-                
                 if (coord[0] + 1, coord[1]) in current_coords:
                     continue
-                if (field.get((coord[0] + 1, coord[1])) is None
-                   or field[(coord[0] + 1, coord[1])] in self.tetrimino_tuple):
+                if (field.get((coord[0] + 1, coord[1])) is None or field[(coord[0] + 1, coord[1])] in self.tetrimino_tuple):
                     return
             self.box_coords = [(self.box_coords[0][0] + 1,
                                 self.box_coords[0][1]),
@@ -385,8 +382,7 @@ class Tetrimino:
             for coord in current_coords:
                 if (coord[0] - 1, coord[1]) in current_coords:
                     continue
-                if (field.get((coord[0] - 1, coord[1])) is None
-                   or field[(coord[0] - 1, coord[1])] in self.tetrimino_tuple):
+                if (field.get((coord[0] - 1, coord[1])) is None or field[(coord[0] - 1, coord[1])] in self.tetrimino_tuple):
                     return
             self.box_coords = [(self.box_coords[0][0] - 1,
                                 self.box_coords[0][1]),
@@ -425,8 +421,6 @@ class Tetrimino:
         # tetriminos collide with themselves
         current_coords = self.return_coords(False)
         for coord in current_coords:
-            if ((field.get((coord[0], coord[1] + 1)) == "X"
-               or field[(coord[0], coord[1] + 1)] in self.tetrimino_tuple)
-               and (coord[0], coord[1] + 1) not in current_coords):
+            if ((field.get((coord[0], coord[1] + 1)) == "X" or field[(coord[0], coord[1] + 1)] in self.tetrimino_tuple) and (coord[0], coord[1] + 1) not in current_coords):
                 return True
         return False

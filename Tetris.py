@@ -3,6 +3,7 @@ Copyright 2020 Patrick Müller
 Tetris
 """
 # check tkinter for design and to do the menu and pause option
+# sometimes placed tetriminos disappeared
 from Gamelogic import *
 from Graphic import *
 from time import time
@@ -55,6 +56,8 @@ while g.state != -1:
         g.root.update_idletasks()
         g.root.update()
 
+    if g.state == 2:
+        g.root.bind("p", g.event_handler)
     while g.state == 2:
         # pause menu
         g.root.update_idletasks()

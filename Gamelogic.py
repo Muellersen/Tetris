@@ -18,9 +18,9 @@ class GameLogic:
     def __init__(self):
         self.field = {}
         for x in range(10):
-            for y in range(23):
-                if y == 22:
-                    self.field[(x, y)] = "X"
+            for y in range(24):
+                if y >= 22:
+                    self.field[(x, y)] = "L"
                 else:
                     self.field[(x, y)] = "N"
         self.score = 0

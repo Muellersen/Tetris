@@ -82,7 +82,8 @@ class Graphic:
                 self.state = -1
             else:
                 self.state = 2
-
+        elif key == "p":
+            self.state = 1
         self.root.bind("<Up>", self.event_handler)
         self.root.bind("x", self.event_handler)
         self.root.bind("<Right>", self.event_handler)
