@@ -333,7 +333,7 @@ class Tetrimino:
                 new_coords = self.return_coords(True)  # new virtual coords
                 for a in new_coords:  # checking if the Tetrimino hit smth
                     if (field.get(a) is None
-                       or field[a] in self.tetrimino_tuple):
+                       or field[a] in self.tetrimino_tuple or field[a] == "X"):
                         stop = True
                 if stop is True:
                     # if the rotation didnt work we have to

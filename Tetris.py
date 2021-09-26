@@ -7,7 +7,6 @@ from Gamelogic import *
 from Graphic import *
 from time import time
 
-# make big while loop and then some smaller for the different menues and a state variable to switch in between
 state = 0
 previous_state = 0
 game = GameLogic()

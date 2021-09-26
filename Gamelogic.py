@@ -15,7 +15,6 @@ import random
 
 
 class GameLogic:
-
     def __init__(self):
         self.field = {}
         for x in range(10):
